@@ -1,0 +1,9 @@
+data/*.csv
+data/*.jsonl
+model
+model/
+wandb
+wandb/
+__pycache__
+__pycache__/
+*.out
