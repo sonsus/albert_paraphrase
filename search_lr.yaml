@@ -18,7 +18,7 @@ parameters:
     kfold_k:
         value: 0
     albert_scale:
-        value: large # large-64 / base-256 on titanXp
+        value: large # large-64 / base-128 on titanXp
     bsz:
         value: 64
     ffndim2hidden:
