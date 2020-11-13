@@ -81,7 +81,6 @@ def main():
     np.random.seed(EXPCONF.seed)
     torch.manual_seed(EXPCONF.seed)
     torch.cuda.manual_seed_all(EXPCONF.seed)
-
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     trainloader, vocab, _trainds = get_loader(EXPCONF, getdev=False)
@@ -90,15 +89,12 @@ def main():
     assert len(trainloader)>0, f"trainloader is empty!"
     assert len(devloader)>0, f"devloader is empty!"
 
-    albertconf = MODELCONF[EXPCONF.albert_scale]
-    albertconf = modelconf2transformers(albertconf)
-
     # this is disgraceful.... but just specify things below
+    albertconf = AlbertConfig.from_pretrained(f'albert-{EXPCONF.albert_scale}-v2')
     albertconf.vocab_size = len(vocab.itos)
     albertconf.bos_token_id = vocab.stoi['BOS']
     albertconf.eos_token_id = vocab.stoi['EOS']
     albertconf.pad_token_id = vocab.stoi['PAD']
-
 
 
     model = AlbertForPreTraining(albertconf).to(device)

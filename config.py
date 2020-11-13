@@ -5,7 +5,7 @@ from munch import Munch
 # while, they are sparse (len(set(tokens)) == ~8000, not 30005), so consider constracting it if need more expansion of scale in memory
 
 ## for reproduction (Table 1 @ paper)
-BASE = {
+'''BASE = {
     'layers': 12,
     'hidden': 768,
     'intermediate_size': 768,
@@ -26,16 +26,13 @@ LARGE = {
 XLARGE = LARGE.copy()
 XLARGE['hidden'] = 2048 # 60M
 
-'''xxlarge_conf = xlarge_conf.copy()
-xxlarge_conf['hidden'] = 4096 #235M '''
-
 MODELCONF = {
     'base': BASE,
     'large': LARGE,
     'xlarge': XLARGE,
     }
 
-MODELCONF = Munch(MODELCONF)
+MODELCONF = Munch(MODELCONF)'''
 
 ## this is for experiment configuration
 EXPCONF = {
@@ -45,7 +42,7 @@ EXPCONF = {
     'seed': 777,
 
     # model scaling
-    'albert_scale' : 'large', # base, xlarge
+    'albert_scale' : 'base', # base, xlarge
 
     # datapath and dataloader  == loading f"{dataroot}/{mode}{kfold_k}.jsonl"
     'dataroot': 'data/',
