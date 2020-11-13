@@ -4,35 +4,6 @@ from munch import Munch
 # according to the csv, max(tokens) = 30005
 # while, they are sparse (len(set(tokens)) == ~8000, not 30005), so consider constracting it if need more expansion of scale in memory
 
-## for reproduction (Table 1 @ paper)
-'''BASE = {
-    'layers': 12,
-    'hidden': 768,
-    'intermediate_size': 768,
-    'embedding': 128,
-    'max_position_embeddings': 35,
-    'attention_probs_dropout_prob': 0.1,
-}
-
-LARGE = {
-    'layers': 24,
-    'hidden': 1024,
-    'intermediate_size': 1024,
-    'embedding': 128,
-    'max_position_embeddings': 35,
-    'attention_probs_dropout_prob': 0.1,
-} #18M
-
-XLARGE = LARGE.copy()
-XLARGE['hidden'] = 2048 # 60M
-
-MODELCONF = {
-    'base': BASE,
-    'large': LARGE,
-    'xlarge': XLARGE,
-    }
-
-MODELCONF = Munch(MODELCONF)'''
 
 ## this is for experiment configuration
 EXPCONF = {
@@ -43,6 +14,8 @@ EXPCONF = {
 
     # model scaling
     'albert_scale' : 'base', # base, xlarge
+    'use_pretrained': False,
+    'ffndim2hidden': False,
 
     # datapath and dataloader  == loading f"{dataroot}/{mode}{kfold_k}.jsonl"
     'dataroot': 'data/',

@@ -16,16 +16,6 @@ import random
 import numpy as np
 from fire import Fire
 
-def modelconf2transformers(conf):
-    return AlbertConfig(
-                    num_labels = 2, # for SOP classifier. not sure this is default 2
-                    num_hidden_layers = conf['layers'],
-                    num_hidden_groups = 1, # shared
-                    hidden_size = conf['hidden'],
-                    embedding_size = conf['embedding'],
-                    max_position_embeddings = conf['max_position_embeddings']
-                    )
-
 
 def evaldev(expconf, model, devloader, ep):
     model.eval()
@@ -41,8 +31,8 @@ def evaldev(expconf, model, devloader, ep):
     for i, (b, l, datasetids) in enumerate(tqdm(devloader, desc="eval iter progress")):
         outputs = model(**b, sentence_order_label=l, return_dict=True)
         vsz= outputs.prediction_logits.shape[-1]
-        lossmlm += F.cross_entropy(outputs.prediction_logits.detach().view(-1,vsz).contiguous(), b['labels'].view(-1))
-        losspp += F.cross_entropy(outputs.sop_logits, l)
+        lossmlm += F.cross_entropy(outputs.prediction_logits.detach().view(-1,vsz).contiguous(), b['labels'].view(-1)).item()
+        losspp += F.cross_entropy(outputs.sop_logits, l).item()
 
     lossmlm /= L
     losspp /= L
@@ -91,6 +81,8 @@ def main():
 
     # this is disgraceful.... but just specify things below
     albertconf = AlbertConfig.from_pretrained(f'albert-{EXPCONF.albert_scale}-v2')
+    if EXPCONF.ffndim2hidden: #originally used 4H for FFN but for memory issue, use 1H for FFN
+        albertconf.intermediate_size = albertconf.hidden_size
     albertconf.vocab_size = len(vocab.itos)
     albertconf.bos_token_id = vocab.stoi['BOS']
     albertconf.eos_token_id = vocab.stoi['EOS']
@@ -141,8 +133,8 @@ def main():
 
             vsz=outputs.prediction_logits.shape[-1]
 
-            lossmlm = F.cross_entropy(outputs.prediction_logits.detach().view(-1,vsz).contiguous(), b['labels'].view(-1))
-            losspp = F.cross_entropy(outputs.sop_logits.detach(), l)
+            lossmlm = F.cross_entropy(outputs.prediction_logits.detach().view(-1,vsz).contiguous(), b['labels'].view(-1)).item()
+            losspp = F.cross_entropy(outputs.sop_logits.detach(), l).item()
 
             wandb.log(
                 {

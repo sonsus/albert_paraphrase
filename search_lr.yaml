@@ -1,0 +1,34 @@
+method: bayes
+metric:
+    goal: minimize
+    name: dev/pp_loss
+parameters:
+    lr:
+        distribution: q_uniform
+        max: 0.01 # 5e-3 # qqp was 5e-5
+        min: 0.00005 # 1e-5
+        q: 0.00005
+    warmups:
+        distribution: q_uniform
+        max: 4000
+        min: 0
+        q: 500
+    numep:
+        value: 10
+    kfold_k:
+        value: 0
+    albert_scale:
+        value: large # large-64 / base-256 on titanXp
+    bsz:
+        value: 64
+    ffndim2hidden:
+        value: False
+    scheduler:
+        value: cosine
+    masking:
+        value: random # for searching
+program: train_albert.py
+command:
+    - python
+    - ${program}
+    - ${args}
