@@ -8,6 +8,7 @@ from munch import Munch
 BASE = {
     'layers': 12,
     'hidden': 768,
+    'intermediate_size': 768,
     'embedding': 128,
     'max_position_embeddings': 35,
     'attention_probs_dropout_prob': 0.1,
@@ -16,6 +17,7 @@ BASE = {
 LARGE = {
     'layers': 24,
     'hidden': 1024,
+    'intermediate_size': 1024,
     'embedding': 128,
     'max_position_embeddings': 35,
     'attention_probs_dropout_prob': 0.1,

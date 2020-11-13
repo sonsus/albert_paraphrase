@@ -38,7 +38,7 @@ def evaldev(expconf, model, devloader, ep):
     losspp = 0
 
 
-    for i, (b, l) in enumerate(tqdm(devloader, desc="eval iter progress")):
+    for i, (b, l, datasetids) in enumerate(tqdm(devloader, desc="eval iter progress")):
         outputs = model(**b, sentence_order_label=l, return_dict=True)
         vsz= outputs.prediction_logits.shape[-1]
         lossmlm += F.cross_entropy(outputs.prediction_logits.detach().view(-1,vsz).contiguous(), b['labels'].view(-1))
@@ -127,7 +127,7 @@ def main():
         lossep_mlm = 0
         lossep_pp = 0
         model.train()
-        for i, (b,l) in enumerate(tqdm(trainloader, desc="iterations progress"),1):
+        for i, (b,l,datasetids) in enumerate(tqdm(trainloader, desc="iterations progress"),1):
             '''
             b.input_ids/token_type_ids/attention_mask .shape ==  (bsz, seqmaxlen,)
             b.l.shape == (bsz,)
@@ -139,6 +139,7 @@ def main():
             ## --> referred to transformers/examples/run_language_modeling.py (v2.1.0)
             ## --> modeling_albert.py ( class AlbertModel.forward() )
             '''
+
             outputs = model(**b, sentence_order_label=l, return_dict=True )
             global_step+=1
 

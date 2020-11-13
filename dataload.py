@@ -56,20 +56,21 @@ class PPDataset(Dataset):
     def collate(self, inputs_labels): # it is for 1split remember.
         batch = defaultdict(list)
         soplabels = []
+        datasetids = []
         tor = torch.cuda if torch.cuda.is_available() else torch
 
         # batch follows the keys in AlbertForPretraining input
         # https://huggingface.co/transformers/v3.1.0/model_doc/albert.html#albertforpretraining
         if self.datamode == 'test':
             for inp in inputs_labels:
-                batch['datasetid'].append(inp['id'])
+                datasetids.append(inp['id'])
                 batch['input_ids'].append(tor.LongTensor(inp['mlminput']))
                 batch['labels'].append(tor.LongTensor(inp['mlmtarget'])) # this target for MLM not PP
                 batch['token_type_ids'].append(tor.LongTensor(inp['typeid']))
 
         else:
             for inp, l in inputs_labels: # each list(int)
-                batch['datasetid'].append(inp['id'])
+                datasetids.append(inp['id'])
                 batch['input_ids'].append(tor.LongTensor(inp['mlminput']))
                 batch['labels'].append(tor.LongTensor(inp['mlmtarget']))
                 batch['token_type_ids'].append(tor.LongTensor(inp['typeid']))
@@ -82,7 +83,7 @@ class PPDataset(Dataset):
         batch['token_type_ids'] = pad_sequence(batch['token_type_ids'], batch_first=True, padding_value=1).long()
         batch['attention_mask'] = (batch['input_ids'] != self.pad).float()
 
-        return  Munch(batch), soplabels #labels = [] if self.datamode == 'test'
+        return  Munch(batch), soplabels, datasetids #labels = [] if self.datamode == 'test'
 
     def build_albert_inputs_label(self, record, split='train'): # split: train dev test
         '''
