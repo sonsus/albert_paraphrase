@@ -147,11 +147,13 @@ class PPDataset(Dataset):
             # pick starting positions with ratio = maskratio / Mean(number_masked)
             # for each picked starting, sample from Geo(ngram)
             # mask! (~nearly $ratio % masked)
-            norm = sum( [1/i for i in range(1, expconf.span_n+1) ] )
+            ps = [1/i for i in range(1, self.expconf.span_n+1) ]
+            norm = sum( ps )
+            ps_ = [p_/norm for p_ in ps]
             p_ratio = self.expconf.span_n / norm
             mask = tor.BoolTensor(np.random.choice(2, L, p=[1-ratio, ratio])) # instead, can use torch.bernoulli
-            todo = tor.LongTensor(np.random.choice(self.expconf.span_n, L, p=[i/(i*norm) for i in range(1, self.expconf.span_n+1)])) + 1
-            mask = todo[mask]
+            todo = tor.LongTensor( np.random.choice(self.expconf.span_n, L, p=ps_) ) + 1
+            mask = todo * mask
             for i,e in enumerate(mask):
                 #if e==1:
                 #     pass # done already
