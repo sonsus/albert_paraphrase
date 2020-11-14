@@ -35,6 +35,10 @@ EXPCONF = {
     'lr': 1e-4,
     'modelsaveroot': 'model/', #path to save .pth
 
+    # PP loss balancing coeff  alpha_pp
+    'alpha_pp': 0.5, # float
+        'alpha_warmup':False, # if True, it grows from 0 to alpha_pp according to warmup_steps 
+
     #adamW
     'weight_decay': 0.01,
 

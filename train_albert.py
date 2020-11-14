@@ -138,27 +138,44 @@ def main():
 
             vsz=outputs.prediction_logits.shape[-1]
 
-            lossmlm = F.cross_entropy(outputs.prediction_logits.detach().view(-1,vsz).contiguous(), b['labels'].view(-1)).item()
-            losspp = F.cross_entropy(outputs.sop_logits.detach(), l).item()
-            acc = accuracy(outputs.sop_logits, l)
+            lossmlm = F.cross_entropy(outputs.prediction_logits.view(-1,vsz).contiguous(), b['labels'].view(-1))
+            losspp = F.cross_entropy(outputs.sop_logits, l)
+            lossppval = losspp.item()
+            acc = accuracy(outputs.sop_logits.clone().detach(), l)
+
+            if EXPCONF.alpha_pp== 1 and not EXPCONF.alpha_warmup:
+                outputs.loss.backward()
+            else:
+                del outputs.loss
+                torch.cuda.empty_cache()
+
+                losspp *= EXPCONF.alpha_pp
+
+                if EXPCONF.alpha_warmup:
+                    grow = min(global_step / EXPCONF.warmups, 1.0)
+                    losspp *= grow
+
+                loss = lossmlm + losspp
+                loss.backward()
+
 
             wandb.log(
                 {
                     'step': (i + ep*L)*bsz if EXPCONF.see_bsz_effect else global_step,
                     'train_step/learning_rate': get_lr_from_optim(optimizer),
-                    'train_step/mlm_loss': lossmlm,
-                    'train_step/pp_loss': losspp,
+                    'train_step/alpha_pp': EXPCONF.alpha_pp * (grow if EXPCONF.alpha_warmup else 1),
+                    'train_step/mlm_loss': lossmlm.item(),
+                    'train_step/pp_loss': lossppval,
                     'train_step/pp_acc': acc,
                 }
             )
 
-            outputs.loss.backward()
             optimizer.step()
             scheduler.step()
             model.zero_grad()
 
-            lossep_mlm += lossmlm
-            lossep_pp += losspp
+            lossep_mlm += lossmlm.item()
+            lossep_pp += lossppval
             accep_pp += acc
 
         lossep_mlm/=L
@@ -190,6 +207,8 @@ if __name__ == '__main__':
     if EXPCONF.debug: ## made debug.jsonl by $ head -20 train.jsonl > debugtrain.jsonl etc.
         EXPCONF.bsz = 6
         EXPCONF.numep = 2
+        EXPCONF.warmups = 3
+        EXPCONF.alpha_warmup = True
 
     print(EXPCONF)
 

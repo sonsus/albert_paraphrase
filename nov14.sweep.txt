@@ -3,3 +3,7 @@ wandb sweep far_base_30_linear.yaml
 
 CUDA_VISIBLE_DEVICES=0 nohup wandb agent sonsus/albert_paraphrase/qn4m1ll8 &
 CUDA_VISIBLE_DEVICES=1 nohup wandb agent sonsus/albert_paraphrase/o0wxv9bp &
+
+
+CUDA_VISIBLE_DEVICES=0 nohup wandb agent sonsus/albert_paraphrase/z1t4i7vd &
+CUDA_VISIBLE_DEVICES=1 nohup wandb agent sonsus/albert_paraphrase/nvvt667u &
