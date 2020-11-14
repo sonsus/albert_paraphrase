@@ -16,16 +16,17 @@ import random
 import numpy as np
 from fire import Fire
 
+def accuracy(soplogits, soplabels):
+    return (soplogits.argmax(dim=1) == soplabels).float().sum().item() / len(soplabels)
 
 def evaldev(expconf, model, devloader, ep):
     model.eval()
     L = len(devloader)
     bsz= len(devloader[0])
 
-
-
     lossmlm = 0
     losspp = 0
+    acc = 0
 
 
     for i, (b, l, datasetids) in enumerate(tqdm(devloader, desc="eval iter progress")):
@@ -33,17 +34,20 @@ def evaldev(expconf, model, devloader, ep):
         vsz= outputs.prediction_logits.shape[-1]
         lossmlm += F.cross_entropy(outputs.prediction_logits.detach().view(-1,vsz).contiguous(), b['labels'].view(-1)).item()
         losspp += F.cross_entropy(outputs.sop_logits, l).item()
+        acc += accuracy(outputs.sop_logits, l)
 
     lossmlm /= L
     losspp /= L
+    acc /= L
 
     wandb.log(
     {
-            'step': (i + ep*L)*bsz if expconf.see_bsz_effect else (i+ep*L),
+            'step': (i + ep*L)*bsz if expconf.see_bsz_effect else ep,
             'dev/mlm_loss': lossmlm,
             'dev/pp_loss': losspp,
+            'dev/pp_acc': acc,
     } )
-    return lossmlm, losspp
+    return lossmlm, losspp, acc
 
 
 def savemodel(expconf, model, vocab, ep, mlm=0, pp=0):
@@ -114,6 +118,7 @@ def main():
     for ep in tqdm(range(1, EXPCONF.numep+1), desc="epoch progress"):
         lossep_mlm = 0
         lossep_pp = 0
+        accep_pp = 0
         model.train()
         for i, (b,l,datasetids) in enumerate(tqdm(trainloader, desc="iterations progress"),1):
             '''
@@ -135,13 +140,15 @@ def main():
 
             lossmlm = F.cross_entropy(outputs.prediction_logits.detach().view(-1,vsz).contiguous(), b['labels'].view(-1)).item()
             losspp = F.cross_entropy(outputs.sop_logits.detach(), l).item()
+            acc = accuracy(outputs.sop_logits, l)
 
             wandb.log(
                 {
                     'step': (i + ep*L)*bsz if EXPCONF.see_bsz_effect else global_step,
+                    'train_step/learning_rate': get_lr_from_optim(optimizer),
                     'train_step/mlm_loss': lossmlm,
                     'train_step/pp_loss': losspp,
-                    'train_step/learning_rate': get_lr_from_optim(optimizer),
+                    'train_step/pp_acc': acc,
                 }
             )
 
@@ -152,18 +159,22 @@ def main():
 
             lossep_mlm += lossmlm
             lossep_pp += losspp
+            accep_pp += acc
 
         lossep_mlm/=L
         lossep_pp/=L
+        accep_pp/=L
+
         wandb.log(
             {
                 'step': ep,
                 'train_ep/mlm_loss': lossep_mlm,
                 'train_ep/pp_loss': lossep_pp,
+                'train_ep/pp_acc': accep_pp,
             }
         )
         print(f"ep:{ep}: losspp = {lossep_pp}, lossmlm={lossep_mlm}")
-        devmlm_loss, devpp_loss = evaldev(EXPCONF, model, devloader, ep)
+        devmlm_loss, devpp_loss, devpp_acc = evaldev(EXPCONF, model, devloader, ep)
         savemodel(EXPCONF, model, vocab, ep, mlm=devmlm_loss, pp=devpp_loss)
     return None
 

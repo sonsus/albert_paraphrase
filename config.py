@@ -24,7 +24,8 @@ EXPCONF = {
     'vocabpath': 'data/vocab.json',
     'numworkers': 0, #hard to tell what is optimal... but consider number of cpus we have https://discuss.pytorch.org/t/guidelines-for-assigning-num-workers-to-dataloader/813/5
 
-    'see_bsz_effect': True, #with this option =True, logs are recorded with x = number of examples seen
+    'see_bsz_effect': False, #with this option =True, logs are recorded with x = number of examples seen
+                            # this is just confusing...
 
     # training conditions
     'numep': 10, # later optimize
