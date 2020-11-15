@@ -91,6 +91,7 @@ def main():
     albertconf.bos_token_id = vocab.stoi['BOS']
     albertconf.eos_token_id = vocab.stoi['EOS']
     albertconf.pad_token_id = vocab.stoi['PAD']
+    albertconf.max_position_embeddings = 40
 
 
     model = AlbertForPreTraining(albertconf).to(device)

@@ -67,6 +67,7 @@ class PPDataset(Dataset):
                 batch['input_ids'].append(tor.LongTensor(inp['mlminput']))
                 batch['labels'].append(tor.LongTensor(inp['mlmtarget'])) # this target for MLM not PP
                 batch['token_type_ids'].append(tor.LongTensor(inp['typeid']))
+                batch['position_ids'].append(tor.LongTensor(inp['position']))
 
         else:
             for inp, l in inputs_labels: # each list(int)
@@ -74,6 +75,7 @@ class PPDataset(Dataset):
                 batch['input_ids'].append(tor.LongTensor(inp['mlminput']))
                 batch['labels'].append(tor.LongTensor(inp['mlmtarget']))
                 batch['token_type_ids'].append(tor.LongTensor(inp['typeid']))
+                batch['position_ids'].append(tor.LongTensor(inp['position']))
                 soplabels.append(l)
 
             soplabels = tor.LongTensor(soplabels)
@@ -81,6 +83,7 @@ class PPDataset(Dataset):
         batch['input_ids'] = pad_sequence(batch['input_ids'], batch_first=True, padding_value=self.pad).long()
         batch['labels'] = pad_sequence(batch['labels'], batch_first=True, padding_value=self.pad).long()
         batch['token_type_ids'] = pad_sequence(batch['token_type_ids'], batch_first=True, padding_value=1).long()
+        batch['position_ids'] = pad_sequence(batch['token_type_ids'], batch_first=True, padding_value=38).long() # 40 is set as max_position_embeddings
         batch['attention_mask'] = (batch['input_ids'] != self.pad).float() # masked == 0
 
         return  Munch(batch), soplabels, datasetids #labels = [] if self.datamode == 'test'
@@ -99,9 +102,12 @@ class PPDataset(Dataset):
         '''
         tokens_w_specials = [self.cls]
         tokens_w_specials.extend(record['s1'])
+        position1 = [i for i in range(len(tokens_w_specials))]
         tokens_w_specials.append(self.sep)
         tokens_w_specials.extend(record['s2'])
         tokens_w_specials.append(self.sep)
+        position2 = [i for i in range( len(record['s2']) + 2 )]
+        position = position1 + position2
 
         typeid = [0 for i in range(len(record['s1']) + 2 )]
         while len(typeid)<len(tokens_w_specials):
@@ -112,6 +118,7 @@ class PPDataset(Dataset):
         inputs['tokens_w_specials'] = tokens_w_specials
 
         inputs['typeid'] = typeid
+        inputs['position'] = position
         inputs['mlminput'], inputs['mlmtarget'] = self.masking(tokens_w_specials)
 
         '''# should do augmentation on jsonl, not here (augmented pair included in same minibatch)

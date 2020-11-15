@@ -7,3 +7,12 @@ CUDA_VISIBLE_DEVICES=1 nohup wandb agent sonsus/albert_paraphrase/o0wxv9bp &
 
 CUDA_VISIBLE_DEVICES=0 nohup wandb agent sonsus/albert_paraphrase/z1t4i7vd &
 CUDA_VISIBLE_DEVICES=1 nohup wandb agent sonsus/albert_paraphrase/nvvt667u &
+
+
+# finding alpha_pp:[0.0, 2.0] under warmup=10k, lr:[0.0004,0.0001]
+wandb sweep alphapp_far_base30_linear.yaml
+wandb sweep alphapp_grow_far_base30_linear.yaml
+
+
+CUDA_VISIBLE_DEVICES=2 nohup wandb agent sonsus/albert_paraphrase/qe59jieg &
+CUDA_VISIBLE_DEVICES=3 nohup wandb agent sonsus/albert_paraphrase/pe7oh0bk &
