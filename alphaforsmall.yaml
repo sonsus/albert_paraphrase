@@ -3,29 +3,29 @@ metric:
     goal: maximize
     name: dev/pp_acc
 parameters:
+    dontsave:
+        value: true
     smaller:
         value: true
     num_hidden_layers:
-        distribution: q_uniform
-        max: 12
-        min: 2
-        q: 1
+        value: 12
     lr: #based on https://wandb.ai/sonsus/albert_paraphrase/runs/8w194kha?workspace=user-sonsus
         value: 0.0002
     alpha_pp:
-        value: 0.25
+        distribution: q_uniform
+        max: 0.1
+        min: 0.005
+        q: 0.005
     warmups: #based on https://wandb.ai/sonsus/albert_paraphrase/runs/8w194kha?workspace=user-sonsus
-        value: 4000
+        value: 1000
     numep:
-        value: 20
+        value: 100
     kfold_k:
         value: 0
     albert_scale:
         value: base # large-64 / base-128 on titanXp
     bsz:
-        value: 128
-    ffndim2hidden:
-        value: false
+        value: 512
     scheduler:
         value: linear
     masking:

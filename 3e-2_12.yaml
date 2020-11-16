@@ -1,31 +1,32 @@
-method: bayes
+method: grid
 metric:
     goal: maximize
     name: dev/pp_acc
 parameters:
+    savethld:
+        value: 0.58
     smaller:
         value: true
     num_hidden_layers:
-        distribution: q_uniform
-        max: 12
-        min: 2
-        q: 1
+        value: 12
     lr: #based on https://wandb.ai/sonsus/albert_paraphrase/runs/8w194kha?workspace=user-sonsus
         value: 0.0002
     alpha_pp:
-        value: 0.45
+        value: 0.03
     warmups: #based on https://wandb.ai/sonsus/albert_paraphrase/runs/8w194kha?workspace=user-sonsus
-        value: 4000
+        value: 1000
     numep:
-        value: 20
+        values:
+        - 50
+        - 100
+        - 150
+        - 200
     kfold_k:
         value: 0
     albert_scale:
         value: base # large-64 / base-128 on titanXp
     bsz:
-        value: 128
-    ffndim2hidden:
-        value: false
+        value: 512
     scheduler:
         value: linear
     masking:

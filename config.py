@@ -9,6 +9,7 @@ from munch import Munch
 EXPCONF = {
     #debug option
     'debug':False,
+    'savethld':0.58,
     #role some dices
     'seed': 777,
 

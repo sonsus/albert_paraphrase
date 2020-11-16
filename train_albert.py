@@ -50,14 +50,14 @@ def evaldev(expconf, model, devloader, ep):
     return lossmlm, losspp, acc
 
 
-def savemodel(expconf, model, vocab, ep, mlm=0, pp=0):
+def savemodel(expconf, model, vocab, ep, mlm=0, pp=0, acc=0):
     d_expconf = expconf.toDict()
     saveroot = Path(expconf.modelsaveroot)
     todaydir = saveroot / get_date()
     if not todaydir.is_dir():
         Path.mkdir(todaydir, parents=True)
 
-    savename = f"albert.pp{pp}.mlm{mlm}.m{expconf.masking}_{get_time()}_ep{ep}.lr{expconf.lr}.w{expconf.warmups}.sch{expconf.scheduler}.bsz{expconf.bsz}.pth"
+    savename = f"devpp_acc{acc:.3f}.m{expconf.masking}_{get_time()}_ep{ep}.lr{expconf.lr}.w{expconf.warmups}.sch{expconf.scheduler}.bsz{expconf.bsz}.pth"
     saved = dict()
     saved = {
         'expconf': d_expconf,
@@ -198,7 +198,8 @@ def main():
         )
         print(f"ep:{ep}: losspp = {lossep_pp}, lossmlm={lossep_mlm}")
         devmlm_loss, devpp_loss, devpp_acc = evaldev(EXPCONF, model, devloader, ep)
-        savemodel(EXPCONF, model, vocab, ep, mlm=devmlm_loss, pp=devpp_loss)
+        if devpp_acc > EXPCONF.savethld:
+            savemodel(EXPCONF, model, vocab, ep, mlm=devmlm_loss, pp=devpp_loss, acc=devpp_acc)
     return None
 
 
