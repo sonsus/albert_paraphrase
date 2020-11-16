@@ -85,8 +85,13 @@ def main():
 
     # this is disgraceful.... but just specify things below
     albertconf = AlbertConfig.from_pretrained(f'albert-{EXPCONF.albert_scale}-v2')
-    if EXPCONF.ffndim2hidden: #originally used 4H for FFN but for memory issue, use 1H for FFN
+    if EXPCONF.smaller: #originally used 4H for FFN but for memory issue, use 1H for FFN
+        albertconf.hidden_size = EXPCONF.hidden_size
+        albertconf.num_hidden_layers = EXPCONF.num_hidden_layers
+        albertconf.num_attention_heads = EXPCONF.num_attention_heads
+
         albertconf.intermediate_size = albertconf.hidden_size
+
     albertconf.vocab_size = len(vocab.itos)
     albertconf.bos_token_id = vocab.stoi['BOS']
     albertconf.eos_token_id = vocab.stoi['EOS']

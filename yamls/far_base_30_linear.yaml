@@ -1,0 +1,33 @@
+method: bayes
+metric:
+    goal: maximize
+    name: dev/pp_acc
+parameters:
+    lr:
+        distribution: q_uniform
+        max: 0.0004 # 5e-3 # qqp was 5e-5
+        min: 0.00002 # 1e-5
+        q: 0.00002
+    warmups:
+        value: 10000
+    numep:
+        value: 30
+    kfold_k:
+        value: 0
+    albert_scale:
+        value: base # large-64 / base-128 on titanXp
+    alpha_pp:
+        value: 0.1
+    bsz:
+        value: 128
+    ffndim2hidden:
+        value: False
+    scheduler:
+        value: linear
+    masking:
+        value: random # for searching
+program: train_albert.py
+command:
+    - python
+    - ${program}
+    - ${args}

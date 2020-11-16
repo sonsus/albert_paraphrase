@@ -1,0 +1,36 @@
+method: bayes
+metric:
+    goal: maximize
+    name: dev/pp_acc
+parameters:
+    lr: #based on https://wandb.ai/sonsus/albert_paraphrase/runs/8w194kha?workspace=user-sonsus
+        distribution: q_uniform
+        max: 0.0004 # 5e-3 # qqp was 5e-5
+        min: 0.0001 # 1e-5
+        q: 0.00002
+    alpha_pp:
+        distribution: q_uniform
+        max: 2.0
+        min: 0.0
+        q: 0.05
+    warmups: #based on https://wandb.ai/sonsus/albert_paraphrase/runs/8w194kha?workspace=user-sonsus
+        value: 10000
+    numep:
+        value: 30
+    kfold_k:
+        value: 0
+    albert_scale:
+        value: base # large-64 / base-256 on titanXp
+    bsz:
+        value: 128
+    ffndim2hidden:
+        value: False
+    scheduler:
+        value: linear
+    masking:
+        value: span # for searching
+program: train_albert.py
+command:
+    - python
+    - ${program}
+    - ${args}

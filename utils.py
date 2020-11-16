@@ -1,9 +1,9 @@
-from munch import Munch
 import json
 from contextlib import contextmanager
 from time import time
 from pathlib import Path
 from datetime import datetime
+from munch import Munch
 
 def open_vocab(vocabpath):
     vocab= Munch(json.load(open(vocabpath)))

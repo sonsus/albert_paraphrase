@@ -19,7 +19,7 @@ def split_kfold(factor=10, k=3, datapath='./train.csv', vocabpath='./vocab.json'
         raw = csv.reader(f) # default option will work properly
         rawt= csv.reader(t)
         processed = [ (int(id), s1.split(), s2.split(), int(label)) for (id,s1,s2,label) in raw if id != 'id' ]
-        processedt = [ (int(id), s1.split(), s2.split()) for (id,s1,s2,label) in raw if id != 'id' ]
+        processedt = [ (int(id), s1.split(), s2.split()) for (id,s1,s2) in rawt if id != 'id' ]
 
         # make vocab
         for (id,s1,s2,l) in processed:

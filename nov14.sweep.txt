@@ -16,3 +16,14 @@ wandb sweep alphapp_grow_far_base30_linear.yaml
 
 CUDA_VISIBLE_DEVICES=2 nohup wandb agent sonsus/albert_paraphrase/qe59jieg &
 CUDA_VISIBLE_DEVICES=3 nohup wandb agent sonsus/albert_paraphrase/pe7oh0bk &
+
+
+
+# for masking =span do the same as above.
+
+wandb sweep span_alphapp_grow_far_base30_linear.yaml
+wandb sweep span_alphapp_far_base30_linear.yaml
+
+
+CUDA_VISIBLE_DEVICES=4 nohup wandb agent sonsus/albert_paraphrase/3rlecsgl &
+CUDA_VISIBLE_DEVICES=5 nohup wandb agent sonsus/albert_paraphrase/ht1mkm1f &

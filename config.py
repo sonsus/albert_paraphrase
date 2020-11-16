@@ -14,8 +14,11 @@ EXPCONF = {
 
     # model scaling
     'albert_scale' : 'base', # base, xlarge
-    'use_pretrained': False,
-    'ffndim2hidden': False,
+    #'use_pretrained': False,
+    'smaller': True,
+        'hidden_size': 128,
+        'num_hidden_layers': 8,
+        'num_attention_heads': 8,
 
     # datapath and dataloader  == loading f"{dataroot}/{mode}{kfold_k}.jsonl"
     'dataroot': 'data/',
@@ -37,7 +40,7 @@ EXPCONF = {
 
     # PP loss balancing coeff  alpha_pp
     'alpha_pp': 0.5, # float
-        'alpha_warmup':False, # if True, it grows from 0 to alpha_pp according to warmup_steps 
+        'alpha_warmup':False, # if True, it grows from 0 to alpha_pp according to warmup_steps
 
     #adamW
     'weight_decay': 0.01,
