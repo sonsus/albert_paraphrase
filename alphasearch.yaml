@@ -1,0 +1,38 @@
+method: bayes
+metric:
+    goal: maximize
+    name: dev/pp_acc
+parameters:
+    weight_decay:
+        value: 0
+    savethld:
+        value: 0.60
+    smaller:
+        value: true
+    num_hidden_layers:
+        value: 12
+    lr: #based on https://wandb.ai/sonsus/albert_paraphrase/runs/8w194kha?workspace=user-sonsus
+        value: 0.0001
+    alpha_pp:
+        distribution: uniform
+        max: 2.0
+        min: 0.001  
+    warmups: #based on https://wandb.ai/sonsus/albert_paraphrase/runs/8w194kha?workspace=user-sonsus
+        value: 1000
+    numep:
+        value: 40
+    kfold_k:
+        value: 0
+    albert_scale:
+        value: base # large-64 / base-128 on titanXp
+    bsz:
+        value: 512
+    scheduler:
+        value: linear
+    masking:
+        value: span # for searching
+program: train_albert.py
+command:
+    - python
+    - ${program}
+    - ${args}

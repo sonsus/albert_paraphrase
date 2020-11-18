@@ -1,0 +1,35 @@
+
+## 50 ep, weight decay 1e-[1,2,3,4,inf] for alpha pp  = [1, 3, 8] e-2
+wandb sweep 1e-2_12.yaml
+wandb sweep 3e-2_12.yaml
+wandb sweep 8e-2_12.yaml
+
+CUDA_VISIBLE_DEVICES=0 nohup wandb agent sonsus/albert_paraphrase/1soknm5w &
+CUDA_VISIBLE_DEVICES=1 nohup wandb agent sonsus/albert_paraphrase/5ho7bqpw &
+CUDA_VISIBLE_DEVICES=2 nohup wandb agent sonsus/albert_paraphrase/qmyl2f04 &
+
+
+wandb sweep MLP_DOp.yaml
+wandb sweep MLP_lr.yaml
+wandb sweep MLP_nlayers.yaml
+
+#CUDA_VISIBLE_DEVICES=3 nohup wandb agent sonsus/albert_paraphrase/m9b9epxw &
+#CUDA_VISIBLE_DEVICES=4 nohup wandb agent sonsus/albert_paraphrase/w1vo4ixj &
+
+
+wandb sweep MLP_DOp.yaml
+wandb sweep MLP_lr.yaml
+wandb sweep MLP_nlayers.yaml
+
+
+
+CUDA_VISIBLE_DEVICES=3 nohup wandb agent sonsus/albert_paraphrase/abz183fs &
+CUDA_VISIBLE_DEVICES=4 nohup wandb agent sonsus/albert_paraphrase/ykgt1g3b &
+CUDA_VISIBLE_DEVICES=5 nohup wandb agent sonsus/albert_paraphrase/o53q6040 &
+
+
+python -m ipdb retrain.py --debug --infer_now --model_date_name 11-17/devpp_acc0.556.mspan_06.04.40_ep15.lr0.0002.w1000.schlinear.bsz512.pth
+
+
+wandb sweep fin.yaml
+CUDA_VISIBLE_DEVICES=5 nohup wandb agent sonsus/albert_paraphrase/wdiwrpgt &

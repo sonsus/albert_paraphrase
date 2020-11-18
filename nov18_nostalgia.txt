@@ -1,0 +1,6 @@
+wandb sweep alphasearch.yaml
+wandb sweep lrsearch.yaml
+
+
+CUDA_VISIBLE_DEVICES=0 nohup wandb agent sonsus/albert_paraphrase/84t9wj4l &
+CUDA_VISIBLE_DEVICES=1 nohup wandb agent sonsus/albert_paraphrase/h4eqng9e &
