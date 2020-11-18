@@ -40,15 +40,20 @@ class PPDataset(Dataset):
 
         print(f"processing {filename}")
         for record in tqdm(records):
-            inp, l = self.build_albert_inputs_label(record, split=self.datamode)
-            processed['inputs'].append(inp)
-            processed['label'].append(l)
+            if self.datamode == 'test':
+                inp =self.build_albert_inputs_label(record, split=self.datamode)
+                processed['inputs'].append(inp)
+
+            else:
+                inp, l = self.build_albert_inputs_label(record, split=self.datamode)
+                processed['inputs'].append(inp)
+                processed['label'].append(l)
 
         self._data = processed['inputs']
-        self._label = processed['label']
+        self._label = processed['label'] if self.datamode != 'test' else []
 
     def __getitem__(self, index):
-        return self._data[index], self._label[index] if self.datamode!='test' else self._data[index]
+        return self._data[index], self._label[index] if self._label else self._data[index]
 
     def __len__(self):
         return len(self._data)
@@ -62,18 +67,27 @@ class PPDataset(Dataset):
         # batch follows the keys in AlbertForPretraining input
         # https://huggingface.co/transformers/v3.1.0/model_doc/albert.html#albertforpretraining
         if self.datamode == 'test':
-            for inp in inputs_labels:
+            for inp_ in inputs_labels:
+                '''for inp in inp_:
+                    datasetids.append(inp['id'])'''
+                inp = inp_[0] #duplicates why?
                 datasetids.append(inp['id'])
-                batch['input_ids'].append(tor.LongTensor(inp['mlminput']))
-                batch['labels'].append(tor.LongTensor(inp['mlmtarget'])) # this target for MLM not PP
+                if self.expconf.clstrain:
+                    batch['input_ids'].append(tor.LongTensor(inp['tokens_w_specials']))
+                else:
+                    batch['input_ids'].append(tor.LongTensor(inp['mlminput']))
+                    batch['labels'].append(tor.LongTensor(inp['mlmtarget'])) # this target for MLM not PP
                 batch['token_type_ids'].append(tor.LongTensor(inp['typeid']))
                 batch['position_ids'].append(tor.LongTensor(inp['position']))
 
         else:
             for inp, l in inputs_labels: # each list(int)
                 datasetids.append(inp['id'])
-                batch['input_ids'].append(tor.LongTensor(inp['mlminput']))
-                batch['labels'].append(tor.LongTensor(inp['mlmtarget']))
+                if self.expconf.clstrain:
+                    batch['input_ids'].append(tor.LongTensor(inp['tokens_w_specials']))
+                else:
+                    batch['input_ids'].append(tor.LongTensor(inp['mlminput']))
+                    batch['labels'].append(tor.LongTensor(inp['mlmtarget'])) # this target for MLM not PP
                 batch['token_type_ids'].append(tor.LongTensor(inp['typeid']))
                 batch['position_ids'].append(tor.LongTensor(inp['position']))
                 soplabels.append(l)
@@ -81,7 +95,8 @@ class PPDataset(Dataset):
             soplabels = tor.LongTensor(soplabels)
 
         batch['input_ids'] = pad_sequence(batch['input_ids'], batch_first=True, padding_value=self.pad).long()
-        batch['labels'] = pad_sequence(batch['labels'], batch_first=True, padding_value=self.pad).long()
+        if not self.expconf.clstrain:
+            batch['labels'] = pad_sequence(batch['labels'], batch_first=True, padding_value=self.pad).long()
         batch['token_type_ids'] = pad_sequence(batch['token_type_ids'], batch_first=True, padding_value=1).long()
         batch['position_ids'] = pad_sequence(batch['token_type_ids'], batch_first=True, padding_value=38).long() # 40 is set as max_position_embeddings
         batch['attention_mask'] = (batch['input_ids'] != self.pad).float() # masked == 0
@@ -119,7 +134,8 @@ class PPDataset(Dataset):
 
         inputs['typeid'] = typeid
         inputs['position'] = position
-        inputs['mlminput'], inputs['mlmtarget'] = self.masking(tokens_w_specials)
+        if not self.expconf.clstrain:
+            inputs['mlminput'], inputs['mlmtarget'] = self.masking(tokens_w_specials)
 
         '''# should do augmentation on jsonl, not here (augmented pair included in same minibatch)
         if split == 'train':
@@ -209,7 +225,7 @@ def get_loader(expconf, getdev=False):
                         shuffle = (ds.datamode == 'train'),
                         num_workers = expconf.numworkers,
                         collate_fn = ds.collate,
-                        drop_last = True # remaining tensor of size 1(minibatch size == 1) exception ==> drop
+                        drop_last = ds.datamode!='test' # remaining tensor of size 1(minibatch size == 1) exception ==> drop
                         )
 
 

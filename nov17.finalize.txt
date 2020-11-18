@@ -1,0 +1,24 @@
+11-16/devpp_acc0.556.mspan_16.38.55_ep15.lr0.0002.w1000.schlinear.bsz512.pth .
+11-17/devpp_acc0.557.mspan_04.43.00_ep14.lr0.0002.w1000.schlinear.bsz512.pth .
+
+
+python -m ipdb retrain.py --model_date_name devpp_acc0.556.mspan_16.38.55_ep15.lr0.0002.w1000.schlinear.bsz512.pth --infer_now --kfold_k 1
+model/11-17-cls/infer_now_13.52.56_.devpp_acc0.556.mspan_16.38.55_ep15.lr0.0002.w1000.schlinear.bsz512.pth
+0.5555 (acc)
+0.7333 (losspp)
+
+
+python -m ipdb retrain.py --model_date_name devpp_acc0.557.mspan_04.43.00_ep14.lr0.0002.w1000.schlinear.bsz512.pth --infer_now
+model/11-17-cls/infer_now_13.56.19_.devpp_acc0.557.mspan_04.43.00_ep14.lr0.0002.w1000.schlinear.bsz512.pth
+ 5536
+ 7343
+
+
+cp model/11-17-cls/infer_now_13.56.19_.devpp_acc0.557.mspan_04.43.00_ep14.lr0.0002.w1000.schlinear.bsz512.pth 55.4_sub.csv
+cp model/11-17-cls/infer_now_13.52.56_.devpp_acc0.556.mspan_16.38.55_ep15.lr0.0002.w1000.schlinear.bsz512.pth 55.6_sub.csv
+
+albert55.4_sub.csv
+albert55.6_sub.csv
+
+
+albert_paraphrase 프로젝트에 ASD태그된 넷 중 둘이다.

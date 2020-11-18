@@ -9,7 +9,7 @@ from munch import Munch
 EXPCONF = {
     #debug option
     'debug':False,
-    'savethld':0.58,
+
     #role some dices
     'seed': 777,
 
@@ -38,23 +38,32 @@ EXPCONF = {
     'warmups': 100,
     'lr': 1e-4,
     'modelsaveroot': 'model/', #path to save .pth
-
     # PP loss balancing coeff  alpha_pp
     'alpha_pp': 0.5, # float
         'alpha_warmup':False, # if True, it grows from 0 to alpha_pp according to warmup_steps
 
     #adamW
-    'weight_decay': 0.01,
+    'weight_decay': 0,
 
-
-    # for later inference
-    'modelloadpath': 'model/tobeloaded.pth',
 
     # experiment condition
     'maskratio': 0.15,
     'masking': 'random', # span (span masking used for ALBERT original paper )
         'span_n': 3, # to what n-gram would span masking cover
+    'savethld':0.45,
 
+    ### classification retrain.py configs
+    'cls_morelayers':0,
+    'clstrain': False,
+    'cls_lr': 1e-4,
+    'cls_do_p': 0.1,
+    'cls_numsteps': 2000,
+    'cls_sch': 'linear', #cosine
+    'cls_warmups': 200,
+    'logevery': 100,
+    'model_date_name': 'date/modelpathtobeloaded', # modelsaveroot/date/name
+    ## immediate inference
+    'infer_now': False,
 
 }
 

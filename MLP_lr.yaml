@@ -1,26 +1,33 @@
-method: grid
+method: bayes
 metric:
     goal: maximize
     name: dev/pp_acc
 parameters:
+    weight_decay:
+        value: 0.0
     savethld:
-        value: 0.58
+        value: 0.55
+    model_date_name:
+        value: 11-17/devpp_acc0.556.mspan_06.04.40_ep15.lr0.0002.w1000.schlinear.bsz512.pth
+    logevery:
+        value: 50
+    cls_numsteps:
+        value: 4000
+    cls_warmups:
+        value: 200
+    cls_lr:
+        distribution: q_uniform
+        max: 1e-4
+        min: 1e-6
+        q: 1e-6
+    cls_do_p:
+        value: 0.1
     smaller:
         value: true
     num_hidden_layers:
         value: 12
     lr: #based on https://wandb.ai/sonsus/albert_paraphrase/runs/8w194kha?workspace=user-sonsus
         value: 0.0002
-    alpha_pp:
-        value: 0.03
-    warmups: #based on https://wandb.ai/sonsus/albert_paraphrase/runs/8w194kha?workspace=user-sonsus
-        value: 1000
-    numep:
-        values:
-        - 50
-        - 100
-        - 150
-        - 200
     kfold_k:
         value: 0
     albert_scale:
@@ -31,7 +38,7 @@ parameters:
         value: linear
     masking:
         value: span # for searching
-program: train_albert.py
+program: retrain.py
 command:
     - python
     - ${program}

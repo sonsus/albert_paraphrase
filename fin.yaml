@@ -3,24 +3,32 @@ metric:
     goal: maximize
     name: dev/pp_acc
 parameters:
+    weight_decay:
+        value: 0
     savethld:
-        value: 0.58
+        value: 0.54
     smaller:
         value: true
+    num_attention_heads:
+        values:
+        - 2
+        - 4
+        - 8
     num_hidden_layers:
-        value: 12
+        values:
+        - 6
+        - 12
     lr: #based on https://wandb.ai/sonsus/albert_paraphrase/runs/8w194kha?workspace=user-sonsus
-        value: 0.0002
+        values:
+        - 0.00001
+        - 0.000008
+        - 0.000005
     alpha_pp:
         value: 0.01
     warmups: #based on https://wandb.ai/sonsus/albert_paraphrase/runs/8w194kha?workspace=user-sonsus
         value: 1000
     numep:
-        values:
-        - 50
-        - 100
-        - 150
-        - 200
+        value: 40
     kfold_k:
         value: 0
     albert_scale:
