@@ -98,7 +98,7 @@ class PPDataset(Dataset):
         if not self.expconf.clstrain:
             batch['labels'] = pad_sequence(batch['labels'], batch_first=True, padding_value=self.pad).long()
         batch['token_type_ids'] = pad_sequence(batch['token_type_ids'], batch_first=True, padding_value=1).long()
-        batch['position_ids'] = pad_sequence(batch['token_type_ids'], batch_first=True, padding_value=38).long() # 40 is set as max_position_embeddings
+        batch['position_ids'] = pad_sequence(batch['position_ids'], batch_first=True, padding_value=38).long() # 40 is set as max_position_embeddings
         batch['attention_mask'] = (batch['input_ids'] != self.pad).float() # masked == 0
 
         return  Munch(batch), soplabels, datasetids #labels = [] if self.datamode == 'test'
