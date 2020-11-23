@@ -10,7 +10,7 @@
 
 # Semantic Textual Similarity Classification
 
-## 문제 형태 (Quora Question Pair와 같은 형식) 
+## I. 문제 형태 (Quora Question Pair와 같은 형식) 
 1. 두 문장이 주어진다
 2. 같은 뜻인가? Binary Classification
 
@@ -25,7 +25,7 @@
 - 모델 역시 작은 걸 써야한다. 
 
 
-## 모델 선택
+## II. 모델 선택
 
 ### 1. Word level alignment vs. Sentence level alignment
 >> **결국 Sentence Level Alignment 하기로 결정**   
@@ -50,10 +50,10 @@
 
 -----------------------------------------------------------
 
-## VOCAB
+## III. VOCAB
 > 토큰은 30005번까지 있는데 실제로는 10k개도 안되어서 다시 변환해서 사용
 
-## 실험 1: ALBERT 
+## IV. 실험 1: ALBERT 
 [github](https://github.com/sonsus/albert_paraphrase)
 [wandb](https://wandb.ai/sonsus/albert_paraphrase/)
 > 구현에 2일 걸렸다. 
@@ -86,7 +86,7 @@
 
 -----------------------------------------------------------
 
-## 실험 2: CNN-for sentence classification (Yoon et al, 2014) 
+## V. 실험 2: CNN-for sentence classification (Yoon et al, 2014) 
 [github](https://github.com/sonsus/cnn-text-classification-pytorch)
 [wandb](https://wandb.ai/sonsus/cnn-text-classification-pytorch)
 
@@ -103,11 +103,11 @@
 
 --------------------------------------------------
 
-## 제출
+## VI. 제출
 ### 23:30~23:45 에 ALBERT 두 개, CNN 두 개 골라서 냈다
 > 56% 가 아니라 74% 라서 너무 행복했다
 
-## 후기 (11/18 정리하면서)
+## VII. 후기 (11/18 정리하면서)
 ### 그래서 baseline은 pretrained model 쓴거죠?
 > 쓴거라고 말해줘요...
 
