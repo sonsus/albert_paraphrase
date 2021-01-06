@@ -1,13 +1,3 @@
-> 제 일주일 요약입니다
-> 성능이 마음처럼 안나와서 너무 힘들었는데 일찍 kaggle sub쫌씩 하면서 해볼걸 그랬어요. 
-> ----------------------------
-
-
-
-
-
-
-
 # Semantic Textual Similarity Classification
 
 ## I. 문제 형태 (Quora Question Pair와 같은 형식) 
